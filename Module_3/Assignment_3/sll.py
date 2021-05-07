@@ -272,9 +272,9 @@ class LinkedList:
             current = current.next
             return self.remove(value, pointer, previous, current)
 
-    def count(self, value: object, pointer=0, count=0, current=None) -> int:
+    def count(self, value: object, count=0, current=None) -> int:
         """
-        :param -- value, pointer (Default of 0), count (Default of 0)
+        :param -- value, count (Default of 0), current (Default of None)
         :returns -- int
         :description -- Counts the number of elements in the linked list that match the provided value
         """
@@ -289,18 +289,35 @@ class LinkedList:
 
         if current.next is not None:
             current = current.next
-            return self.count(value, pointer, count, current)
+            return self.count(value, count, current)
         else:
             return count
 
-    def slice(self, start_index: int, size: int, pointer=0, subset=None) -> object:
+    def slice(self, start_index: int, size: int, subset=None, pointer=0, current=None) -> object:
         """
-        :param -- start_index, size
+        :param -- start_index, size, subset (Default of None), pointer (Default of 0), current (Default of None)
         :returns -- Object
         :description -- Creates and returns a subset of the linked list starting at the start_index to size
         """
-        if start_index < 0 or self.length() < size or size < 0 or start_index == self.length():
+
+        if start_index < 0 or self.length() < size \
+                or size < 0 \
+                or start_index == self.length() \
+                or start_index + size > self.length():
             raise SLLException
+
+        if current is None:
+            current = self.head
+            subset = LinkedList()
+
+        if pointer <= self.length():
+            if start_index <= pointer - 1 <= start_index + size - 1:
+                subset.add_back(current.value)
+            current = current.next
+            pointer += 1
+            self.slice(start_index, size, subset, pointer, current)
+
+        return subset
 
 
 if __name__ == '__main__':
@@ -411,22 +428,22 @@ if __name__ == '__main__':
     print(list, list.count(1), list.count(2), list.count(3), list.count(4))
 
 
-    # print('\n# slice example 1')
-    # list = LinkedList([1, 2, 3, 4, 5, 6, 7, 8, 9])
-    # ll_slice = list.slice(1, 3)
-    # print(list, ll_slice, sep="\n")
-    # ll_slice.remove_at_index(0)
-    # print(list, ll_slice, sep="\n")
-    #
-    #
-    # print('\n# slice example 2')
-    # list = LinkedList([10, 11, 12, 13, 14, 15, 16])
-    # print("SOURCE:", list)
-    # slices = [(0, 7), (-1, 7), (0, 8), (2, 3), (5, 0), (5, 3), (6, 1)]
-    # for index, size in slices:
-    #     print("Slice", index, "/", size, end="")
-    #     try:
-    #         print(" --- OK: ", list.slice(index, size))
-    #     except:
-    #         print(" --- exception occurred.")
+    print('\n# slice example 1')
+    list = LinkedList([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    ll_slice = list.slice(1, 3)
+    print(list, ll_slice, sep="\n")
+    ll_slice.remove_at_index(0)
+    print(list, ll_slice, sep="\n")
+
+
+    print('\n# slice example 2')
+    list = LinkedList([10, 11, 12, 13, 14, 15, 16])
+    print("SOURCE:", list)
+    slices = [(0, 7), (-1, 7), (0, 8), (2, 3), (5, 0), (5, 3), (6, 1)]
+    for index, size in slices:
+        print("Slice", index, "/", size, end="")
+        try:
+            print(" --- OK: ", list.slice(index, size))
+        except:
+            print(" --- exception occurred.")
 
