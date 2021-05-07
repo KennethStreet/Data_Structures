@@ -163,54 +163,144 @@ class LinkedList:
 
     def remove_front(self) -> None:
         """
-        TODO: Write this implementation
+        :param -- None
+        :returns -- None
+        :description -- Removes the first node from the list
         """
-        pass
+        if self.length() <= 0:
+            raise SLLException
+        elif self.length() == 1:
+            self.head.next = self.tail
+        else:
+            previous = self.head
+            current = self.head.next
+            previous.next = current.next
 
-    def remove_back(self) -> None:
+    def remove_back(self, pointer=0, previous=None, current=None) -> None:
         """
-        TODO: Write this implementation
+        :param -- pointer (Default of 0), previous (Default of None), current (Default of None)
+        :returns -- None
+        :description -- Removes the last node from the list
         """
-        pass
+        if self.length() <= 0:
+            raise SLLException
 
-    def remove_at_index(self, index: int) -> None:
+        if current is None:
+            current = self.head
+
+        if pointer == self.length():
+            previous.next = current.next
+        else:
+            pointer += 1
+            previous = current
+            current = current.next
+            self.remove_back(pointer, previous, current)
+
+    def remove_at_index(self, index: int, pointer=0, previous=None, current=None) -> None:
         """
-        TODO: Write this implementation
+        :param -- index, pointer (Default of 0), previous (Default of None), current (Default of None)
+        :returns -- None
+        :description -- Removes a node from the given index
         """
-        pass
+        if self.length() <= 0 or self.length() <= index or index < 0:
+            raise SLLException
+
+        if index == 0:
+            self.remove_front()
+            return
+
+        if current is None:
+            current = self.head
+
+        if pointer - 1 == index:
+            previous.next = current.next
+        else:
+            pointer += 1
+            previous = current
+            current = current.next
+            self.remove_at_index(index, pointer, previous, current)
 
     def get_front(self) -> object:
         """
-        TODO: Write this implementation
+        :param -- None
+        :returns -- Object
+        :description -- Returns the value of the first node in the list without removing it
         """
-        pass
+        if self.length() <= 0:
+            raise SLLException
 
-    def get_back(self) -> object:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        return self.head.next.value
 
-    def remove(self, value: object) -> bool:
+    def get_back(self, pointer=0, current=None) -> object:
         """
-        TODO: Write this implementation
+        :param -- pointer (Default of 0), current (Default of None)
+        :returns -- Object
+        :description -- Returns the value of the last node in the list without removing it
         """
-        pass
+        if self.length() <= 0:
+            raise SLLException
 
-    def count(self, value: object) -> int:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        if current is None:
+            current = self.head
 
-    def slice(self, start_index: int, size: int) -> object:
+        if pointer == self.length():
+            return current.value
+        else:
+            pointer += 1
+            current = current.next
+            return self.get_back(pointer, current)
+
+    def remove(self, value: object, pointer=0, previous=None, current=None) -> bool:
         """
-        TODO: Write this implementation
+        :param -- value, pointer (Default of 0), previous (Default of None), current (Default of None)
+        :returns -- bool
+        :description -- Traverses the linked list and removes the first instance of the value passed
         """
-        pass
+        if self.length() <= 0 or self.length() <= pointer:
+            return False
 
+        if current is None:
+            previous = self.head
+            current = previous.next
 
+        if current.value == value:
+            previous.next = current.next
+            return True
+        else:
+            pointer += 1
+            previous = current
+            current = current.next
+            return self.remove(value, pointer, previous, current)
 
+    def count(self, value: object, pointer=0, count=0, current=None) -> int:
+        """
+        :param -- value, pointer (Default of 0), count (Default of 0)
+        :returns -- int
+        :description -- Counts the number of elements in the linked list that match the provided value
+        """
+        if self.length() <= 0:
+            raise SLLException
+
+        if current is None:
+            current = self.head
+
+        if value == current.value:
+            count += 1
+
+        if current.next is not None:
+            current = current.next
+            return self.count(value, pointer, count, current)
+        else:
+            return count
+
+    def slice(self, start_index: int, size: int, pointer=0, subset=None) -> object:
+        """
+        :param -- start_index, size
+        :returns -- Object
+        :description -- Creates and returns a subset of the linked list starting at the start_index to size
+        """
+        if start_index < 0 or self.length() < size or size < 0 or start_index == self.length():
+            raise SLLException
 
 
 if __name__ == '__main__':
@@ -246,81 +336,81 @@ if __name__ == '__main__':
             print(type(e))
 
 
-    # print('\n# remove_front example 1')
-    # list = LinkedList([1, 2])
-    # print(list)
-    # for i in range(3):
-    #     try:
-    #         list.remove_front()
-    #         print('Successful removal', list)
-    #     except Exception as e:
-    #         print(type(e))
-    #
-    #
-    # print('\n# remove_back example 1')
-    # list = LinkedList()
-    # try:
-    #     list.remove_back()
-    # except Exception as e:
-    #     print(type(e))
-    # list.add_front('Z')
-    # list.remove_back()
-    # print(list)
-    # list.add_front('Y')
-    # list.add_back('Z')
-    # list.add_front('X')
-    # print(list)
-    # list.remove_back()
-    # print(list)
-    #
-    #
-    # print('\n# remove_at_index example 1')
-    # list = LinkedList([1, 2, 3, 4, 5, 6])
-    # print(list)
-    # for index in [0, 0, 0, 2, 2, -2]:
-    #     print('Removed at index:', index, ': ', end='')
-    #     try:
-    #         list.remove_at_index(index)
-    #         print(list)
-    #     except Exception as e:
-    #         print(type(e))
-    # print(list)
-    #
-    #
-    # print('\n# get_front example 1')
-    # list = LinkedList(['A', 'B'])
-    # print(list.get_front())
-    # print(list.get_front())
-    # list.remove_front()
-    # print(list.get_front())
-    # list.remove_back()
-    # try:
-    #     print(list.get_front())
-    # except Exception as e:
-    #     print(type(e))
-    #
-    #
-    # print('\n# get_back example 1')
-    # list = LinkedList([1, 2, 3])
-    # list.add_back(4)
-    # print(list.get_back())
-    # list.remove_back()
-    # print(list)
-    # print(list.get_back())
-    #
-    #
-    # print('\n# remove example 1')
-    # list = LinkedList([1, 2, 3, 1, 2, 3, 1, 2, 3])
-    # print(list)
-    # for value in [7, 3, 3, 3, 3]:
-    #     print(list.remove(value), list.length(), list)
-    #
-    #
-    # print('\n# count example 1')
-    # list = LinkedList([1, 2, 3, 1, 2, 2])
-    # print(list, list.count(1), list.count(2), list.count(3), list.count(4))
-    #
-    #
+    print('\n# remove_front example 1')
+    list = LinkedList([1, 2])
+    print(list)
+    for i in range(3):
+        try:
+            list.remove_front()
+            print('Successful removal', list)
+        except Exception as e:
+            print(type(e))
+
+
+    print('\n# remove_back example 1')
+    list = LinkedList()
+    try:
+        list.remove_back()
+    except Exception as e:
+        print(type(e))
+    list.add_front('Z')
+    list.remove_back()
+    print(list)
+    list.add_front('Y')
+    list.add_back('Z')
+    list.add_front('X')
+    print(list)
+    list.remove_back()
+    print(list)
+
+
+    print('\n# remove_at_index example 1')
+    list = LinkedList([1, 2, 3, 4, 5, 6])
+    print(list)
+    for index in [0, 0, 0, 2, 2, -2]:
+        print('Removed at index:', index, ': ', end='')
+        try:
+            list.remove_at_index(index)
+            print(list)
+        except Exception as e:
+            print(type(e))
+    print(list)
+
+
+    print('\n# get_front example 1')
+    list = LinkedList(['A', 'B'])
+    print(list.get_front())
+    print(list.get_front())
+    list.remove_front()
+    print(list.get_front())
+    list.remove_back()
+    try:
+        print(list.get_front())
+    except Exception as e:
+        print(type(e))
+
+
+    print('\n# get_back example 1')
+    list = LinkedList([1, 2, 3])
+    list.add_back(4)
+    print(list.get_back())
+    list.remove_back()
+    print(list)
+    print(list.get_back())
+
+
+    print('\n# remove example 1')
+    list = LinkedList([1, 2, 3, 1, 2, 3, 1, 2, 3])
+    print(list)
+    for value in [7, 3, 3, 3, 3]:
+        print(list.remove(value), list.length(), list)
+
+
+    print('\n# count example 1')
+    list = LinkedList([1, 2, 3, 1, 2, 2])
+    print(list, list.count(1), list.count(2), list.count(3), list.count(4))
+
+
     # print('\n# slice example 1')
     # list = LinkedList([1, 2, 3, 4, 5, 6, 7, 8, 9])
     # ll_slice = list.slice(1, 3)
