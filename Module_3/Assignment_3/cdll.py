@@ -313,22 +313,81 @@ class CircularList:
         :returns: None
         :description: Reverses the order of the linked list
         """
-        pass
-        # if self.is_empty():
-        #     return
-        #
-        # current = self.sentinel.next
-        # while current != self.sentinel:
-        #     temp = current.prev
-        #     current.prev = current.next
-        #     current.next = temp
-        #     current = current.prev
+        if self.is_empty():
+            return
+
+        first_node = self.sentinel.next
+        second_node = self.sentinel.prev
+        pointer = 0
+
+        while pointer < self.length() / 2:
+            temp = first_node.next  # Begin switching nodes
+
+            first_node.next = second_node.next
+            first_node.next.prev = first_node
+
+            second_node.next = temp
+            second_node.next.prev = second_node
+
+            temp = first_node.prev
+
+            second_node.prev.next = first_node
+            first_node.prev = second_node.prev
+
+            second_node.prev = temp
+            second_node.prev.next = second_node
+
+            temp = first_node.prev  # Increment/Decrement nodes for next switch
+            first_node = second_node.next
+            second_node = temp
+            pointer += 1
 
     def sort(self) -> None:
         """
-        TODO: Write this implementation
+        :param: None
+        :returns: None
+        :description: Sorts the doubly linked list using bubble sort
         """
-        pass
+        if self.is_empty():
+            return None
+
+        change_made = False
+        first_node = self.sentinel.next
+        second_node = first_node.next
+
+        while first_node != self.sentinel and second_node != self.sentinel:
+            if first_node.value > second_node.value:
+                while first_node.value > second_node.value:
+                    change_made = True
+                    temp = first_node.next  # Begin switching nodes
+
+                    first_node.next = second_node.next
+                    first_node.next.prev = first_node
+
+                    second_node.next = temp
+                    second_node.next.prev = second_node
+
+                    temp = first_node.prev
+
+                    second_node.prev.next = first_node
+                    first_node.prev = second_node.prev
+
+                    second_node.prev = temp
+                    second_node.prev.next = second_node
+                    second_node = first_node.next
+                    if second_node == self.sentinel:
+                        first_node = self.sentinel.next
+                        second_node = first_node.next
+                        break
+            else:
+                first_node = second_node
+                second_node = first_node.next
+                if second_node == self.sentinel and not change_made:
+                    break
+                elif second_node == self.sentinel:
+                    first_node = self.sentinel.next
+                    second_node = first_node.next
+                    change_made = False
 
     def rotate(self, steps: int) -> None:
         """
@@ -338,9 +397,24 @@ class CircularList:
 
     def remove_duplicates(self) -> None:
         """
-        TODO: Write this implementation
+        :param: None
+        :returns: None
+        :description: Removes duplicates from the linked list
         """
-        pass
+        if self.is_empty():
+            return None
+
+        current = self.sentinel.next
+
+        while current != self.sentinel:  # Iterate through the linked list
+            if current.value == current.next.value:  # If duplicate has been found then remove current.next
+                current.next = current.next.next
+                current.next.prev = current
+                if current.value != current.next.value:  # Remove current if duplicate has been found
+                    current.prev.next = current.next
+                    current.next.prev = current.prev
+            else:
+                current = current.next
 
     def odd_even(self) -> None:
         """
@@ -513,19 +587,19 @@ if __name__ == '__main__':
     # lst = CircularList([1, 'A'])
     # lst.reverse()
     # print(lst)
-    #
-    # print('\n# sort example 1')
-    # test_cases = (
-    #     [1, 10, 2, 20, 3, 30, 4, 40, 5],
-    #     ['zebra2', 'apple', 'tomato', 'apple', 'zebra1'],
-    #     [(1, 1), (20, 1), (1, 20), (2, 20)]
-    # )
-    # for case in test_cases:
-    #     lst = CircularList(case)
-    #     print(lst)
-    #     lst.sort()
-    #     print(lst)
-    #
+
+    print('\n# sort example 1')
+    test_cases = (
+        [1, 10, 2, 20, 3, 30, 4, 40, 5],
+        ['zebra2', 'apple', 'tomato', 'apple', 'zebra1'],
+        [(1, 1), (20, 1), (1, 20), (2, 20)]
+    )
+    for case in test_cases:
+        lst = CircularList(case)
+        print(lst)
+        lst.sort()
+        print(lst)
+
     # print('\n# rotate example 1')
     # source = [_ for _ in range(-20, 20, 7)]
     # for steps in [1, 2, 0, -1, -2, 28, -100]:
@@ -544,22 +618,22 @@ if __name__ == '__main__':
     # lst = CircularList()
     # lst.rotate(10)
     # print(lst)
-    #
-    # print('\n# remove_duplicates example 1')
-    # test_cases = (
-    #     [1, 2, 3, 4, 5], [1, 1, 1, 1, 1],
-    #     [], [1], [1, 1], [1, 1, 1, 2, 2, 2],
-    #     [0, 1, 1, 2, 3, 3, 4, 5, 5, 6],
-    #     list("abccd"),
-    #     list("005BCDDEEFI")
-    # )
-    #
-    # for case in test_cases:
-    #     lst = CircularList(case)
-    #     print('INPUT :', lst)
-    #     lst.remove_duplicates()
-    #     print('OUTPUT:', lst)
-    #
+
+    print('\n# remove_duplicates example 1')
+    test_cases = (
+        [1, 2, 3, 4, 5], [1, 1, 1, 1, 1],
+        [], [1], [1, 1], [1, 1, 1, 2, 2, 2],
+        [0, 1, 1, 2, 3, 3, 4, 5, 5, 6],
+        list("abccd"),
+        list("005BCDDEEFI")
+    )
+
+    for case in test_cases:
+        lst = CircularList(case)
+        print('INPUT :', lst)
+        lst.remove_duplicates()
+        print('OUTPUT:', lst)
+
     # print('\n# odd_even example 1')
     # test_cases = (
     #     [1, 2, 3, 4, 5], list('ABCDE'),
